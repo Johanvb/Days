@@ -7,7 +7,7 @@
  * MIT Licensed.
  */
 
-Module.register('MMM-DaysSince', {
+Module.register('MMM-Days', {
 
 	defaults: {
 		interval: 300000, //all modules use milliseconds
@@ -17,19 +17,28 @@ Module.register('MMM-DaysSince', {
 		changeColor: false,
 		limitYellow: 10,
 		limitRed: 30,
-		header: 'Days since events',
+		header: 'Events',
 		showGreen: false,
 		language: config.language,
-		show_summary: true
-	},
-
+		show_summary: true,
+		sinceHeaderText : 'Since',
+		untilHeaderText : 'Until',
+		todayHeaderText : 'Today',
+	},      
+                
 	start: function() {
 		Log.info('Starting module: ' + this.name);
 		if (this.data.classes === 'MMM-DaysSince') {
 			this.data.classes = 'bright medium';
 		}
 		this.loaded = true;
-		this.appendText = ' days since ';
+		this.appendSinceText = ' days since ';
+		this.appendUntilText = ' days until ';
+		
+		this.sinceHeaderText = 'Since';
+		this.untilHeaderText = 'Until';
+		this.todayHeaderText = 'Today';
+		
 		this.updateEvent(this);
 	},
 
@@ -39,10 +48,17 @@ Module.register('MMM-DaysSince', {
 		this.dates = [
 			["Haircut", "2016-07-10"],
 			["Cleaning", "2016-07-15"],
-			["Paycheck", "2016-07-31"],
+			["Paycheck", "2016-07-29"],
 			["Birthday", "2017-06-01"],
-			["Christmas", "2017-12-24"]
+			["Madrid", "2016-08-18"],
+			["Idas fødselsdag", "2016-11-22"],
+			["Christmas", "2016-12-24"]
 		];
+		
+		//Sort the dates
+		this.dates.sort(function(a,b) { 
+		    return new Date(a[1]).getTime() - new Date(b[1]).getTime() 
+		});
 
 		this.dayComparison = 20;
 		setTimeout(function() {
@@ -65,6 +81,9 @@ Module.register('MMM-DaysSince', {
 			wrapper.innerHTML = this.config.loadingText;
 			return wrapper;
 		}
+		var sinceSet = false;
+		var untilSet = false;
+		var todaySet = false;
 
 		for (var key in this.dates) {
 			Log.info('In loop ' + key);
@@ -74,7 +93,7 @@ Module.register('MMM-DaysSince', {
 
 			var header = document.createElement('span');
 			header.innerHTML = e[0];
-			//info.className = 'dimmed';
+			header.className = 'dimmed';
 
 			info.appendChild(header);
 
@@ -87,10 +106,36 @@ Module.register('MMM-DaysSince', {
 
 			var dayString;
 			if(days < 0){
+				
+				
+				if(untilSet == false){
+					untilSet = true;
+					var until = document.createElement('div');
+					until.className = 'bright small';
+					until.innerHTML = this.untilHeaderText;
+					wrapper.appendChild(until);
+				}
+				days = -days;
 				dayString = ""+days + this.appendUntilText + e[0].toLowerCase();
 			}else if(days > 0){
+				if(sinceSet == false){
+					sinceSet = true;
+					var since = document.createElement('div');
+					since.className = 'bright small';
+					since.innerHTML = this.sinceHeaderText;
+					wrapper.appendChild(since);
+				}
+				
 				dayString = ""+days + this.appendSinceText + e[0].toLowerCase();
 			}else{
+				if(todaySet == false){
+					todaySet = true;
+					var today = document.createElement('div');
+					today.className = 'bright small';
+					today.innerHTML = this.todayHeaderText;
+					wrapper.appendChild(today);
+				}
+				
 				dayString = Today;
 			}	
 

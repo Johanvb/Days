@@ -51,6 +51,7 @@ Module.register('MMM-Days', {
 			["Paycheck", "2016-07-29"],
 			["Birthday", "2017-06-01"],
 			["Madrid", "2016-08-18"],
+			["Arsenal - Liverpool", "2016-08-14"],
 			["Idas fødselsdag", "2016-11-22"],
 			["Christmas", "2016-12-24"]
 		];
@@ -61,9 +62,9 @@ Module.register('MMM-Days', {
 		});
 
 		this.dayComparison = 20;
-		setTimeout(function() {
-			updateDom(1000);
-		}, 1000);
+		// setTimeout(function() {
+// 			updateDom(1000);
+// 		}, 1000);
 		setTimeout(self.updateEvent, self.config.interval, self);
 	},
 
